@@ -38,9 +38,9 @@ public class MainManager : MonoBehaviour
             }
         }
 
-        if(GameData.Instance.BestScore > 0)
+        if (GameData.Instance.BestScores[0] > 0)
         {
-            BestScoreText.text = $"Best Score: {GameData.Instance.BestScoreName} : {GameData.Instance.BestScore}";
+            BestScoreText.text = $"Best Score: {GameData.Instance.BestScoreNames[0]} : {GameData.Instance.BestScores[0]}";
         }
     }
 
@@ -61,13 +61,6 @@ public class MainManager : MonoBehaviour
         }
         else if (m_GameOver)
         {
-            if (m_Points > GameData.Instance.BestScore)
-            {
-                GameData.Instance.BestScoreName = GameData.Instance.PlayerName;
-                GameData.Instance.BestScore = m_Points;
-                BestScoreText.text = $"Best Score: {GameData.Instance.BestScoreName} : {GameData.Instance.BestScore}";
-            }
-
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -89,5 +82,7 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+        GameData.Instance.UpdateScoresList(GameData.Instance.PlayerName, m_Points);
+        BestScoreText.text = $"Best Score: {GameData.Instance.BestScoreNames[0]} : {GameData.Instance.BestScores[0]}";
     }
 }

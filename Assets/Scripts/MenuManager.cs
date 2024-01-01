@@ -14,15 +14,12 @@ public class MenuManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (GameData.Instance.BestScore > 0)
+        if (GameData.Instance.BestScores[0] > 0)
         {
-            highScore.text = $"Best Score : {GameData.Instance.BestScoreName} : {GameData.Instance.BestScore}";
+            highScore.text = $"Best Score : {GameData.Instance.BestScoreNames[0]} : {GameData.Instance.BestScores[0]}";
         }
-
-        if (GameData.Instance.PlayerName != "Anon")
-        {
-            playerName.text = GameData.Instance.PlayerName;
-        }
+            
+        playerName.text = GameData.Instance.PlayerName;
     }
 
     // Update is called once per frame
@@ -35,6 +32,11 @@ public class MenuManager : MonoBehaviour
     {
         GameData.Instance.PlayerName = playerName.text;
         SceneManager.LoadScene(1);
+    }
+
+    public void HighScoresList()
+    {
+        SceneManager.LoadScene(2);
     }
 
     public void ExitGame()

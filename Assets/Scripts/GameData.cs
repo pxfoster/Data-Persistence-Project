@@ -6,9 +6,6 @@ using System.IO;
 
 // TODO:
 // Optional:
-//     Create a separate High Score scene that displays
-//         the high score.
-//     Display multiple high scores instead of just one.
 //     Create a Settings scene that allows users to
 //         configure gameplay, and use that information
 //         between sessions.
@@ -18,8 +15,10 @@ public class GameData : MonoBehaviour
     public static GameData Instance;
 
     public string PlayerName;
-    public string BestScoreName;
-    public int BestScore;
+    public string[] BestScoreNames;
+    public int[] BestScores;
+
+    private const int MaxNumHighScores = 5;
 
     private void Awake()
     {
@@ -31,21 +30,62 @@ public class GameData : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        BestScoreNames = new string[MaxNumHighScores];
+        BestScores = new int[MaxNumHighScores];
         LoadGameData();
+    }
+
+    public int GetMaxNumHighScores()
+    {
+        return MaxNumHighScores;
+    }
+
+    public void UpdateScoresList(string newName, int newScore)
+    {
+        int index = GetScoresIndexToUpdate(newScore);
+
+        if (index != -1)
+        {
+            for (int i = MaxNumHighScores - 1; i > index; i--)
+            {
+                BestScoreNames[i] = BestScoreNames[i - 1];
+                BestScores[i] = BestScores[i - 1];
+            }
+
+            BestScoreNames[index] = newName;
+            BestScores[index] = newScore;
+        }
+    }
+
+    private int GetScoresIndexToUpdate(int newScore)
+    {
+        for(int i = 0; i < MaxNumHighScores; i++)
+        {
+            if (newScore > BestScores[i])
+                return i;
+        }
+
+        return -1;
     }
 
     [Serializable]
     class SaveData
     {
-        public string BestScoreName;
-        public int BestScore;
+        public string[] BestScoreNames;
+        public int[] BestScores;
     }
 
     public void SaveGameData()
     {
         SaveData data = new SaveData();
-        data.BestScoreName = BestScoreName;
-        data.BestScore = BestScore;
+        data.BestScoreNames = new string[MaxNumHighScores];
+        data.BestScores = new int[MaxNumHighScores];
+
+        for (int i = 0; i < MaxNumHighScores; i++)
+        {
+            data.BestScoreNames[i] = BestScoreNames[i];
+            data.BestScores[i] = BestScores[i];
+        }
 
         string json = JsonUtility.ToJson(data);
         File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
@@ -59,8 +99,12 @@ public class GameData : MonoBehaviour
         {
             string json = File.ReadAllText(path);
             SaveData data = JsonUtility.FromJson<SaveData>(json);
-            BestScoreName = data.BestScoreName;
-            BestScore = data.BestScore;
+
+            for (int i = 0; i < MaxNumHighScores; i++)
+            {
+                BestScoreNames[i] = data.BestScoreNames[i];
+                BestScores[i] = data.BestScores[i];
+            }
         }
     }
 }
