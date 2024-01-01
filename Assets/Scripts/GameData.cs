@@ -4,12 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-// TODO:
-// Optional:
-//     Create a Settings scene that allows users to
-//         configure gameplay, and use that information
-//         between sessions.
-
 public class GameData : MonoBehaviour
 {
     public static GameData Instance;
@@ -17,8 +11,10 @@ public class GameData : MonoBehaviour
     public string PlayerName;
     public string[] BestScoreNames;
     public int[] BestScores;
+    public Color[] BrickColors;
 
     private const int MaxNumHighScores = 5;
+    private const int MaxNumBrickColors = 3;
 
     private void Awake()
     {
@@ -32,6 +28,12 @@ public class GameData : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         BestScoreNames = new string[MaxNumHighScores];
         BestScores = new int[MaxNumHighScores];
+        
+        BrickColors = new Color[MaxNumBrickColors];
+        BrickColors[0] = Color.green;
+        BrickColors[1] = new Color(1, 1, 0);
+        BrickColors[2] = Color.blue;
+
         LoadGameData();
     }
 
@@ -73,6 +75,7 @@ public class GameData : MonoBehaviour
     {
         public string[] BestScoreNames;
         public int[] BestScores;
+        public Color[] BrickColors;
     }
 
     public void SaveGameData()
@@ -80,11 +83,17 @@ public class GameData : MonoBehaviour
         SaveData data = new SaveData();
         data.BestScoreNames = new string[MaxNumHighScores];
         data.BestScores = new int[MaxNumHighScores];
+        data.BrickColors = new Color[MaxNumBrickColors];
 
         for (int i = 0; i < MaxNumHighScores; i++)
         {
             data.BestScoreNames[i] = BestScoreNames[i];
             data.BestScores[i] = BestScores[i];
+        }
+
+        for(int i = 0; i < MaxNumBrickColors; i++)
+        {
+            data.BrickColors[i] = BrickColors[i];
         }
 
         string json = JsonUtility.ToJson(data);
@@ -104,6 +113,11 @@ public class GameData : MonoBehaviour
             {
                 BestScoreNames[i] = data.BestScoreNames[i];
                 BestScores[i] = data.BestScores[i];
+            }
+
+            for (int i = 0; i < MaxNumBrickColors; i++)
+            {
+                BrickColors[i] = data.BrickColors[i];
             }
         }
     }

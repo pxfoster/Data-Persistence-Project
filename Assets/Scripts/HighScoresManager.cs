@@ -9,7 +9,6 @@ public class HighScoresManager : MonoBehaviour
     [SerializeField] List<Text> Names;
     [SerializeField] List<Text> Scores;
 
-    // Start is called before the first frame update
     void Start()
     {
         for(int i = 0; i < GameData.Instance.GetMaxNumHighScores(); i++)
