@@ -1,19 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 // TODO:
-// High score (saving data between sessions)
-//     As the user plays, the current high score will be
-//         displayed on the screen alongside the player
-//         name who created the score.
-//     If the high score is beaten, the new score and
-//         player name will be displayed instead.
-//     The highest score will be saved between sessions
-//         so that if the player closes and reopens the
-//         application, the high score and player name
-//         will be retained.
-//         
 // Optional:
 //     Create a separate High Score scene that displays
 //         the high score.
@@ -40,5 +31,36 @@ public class GameData : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        LoadGameData();
+    }
+
+    [Serializable]
+    class SaveData
+    {
+        public string BestScoreName;
+        public int BestScore;
+    }
+
+    public void SaveGameData()
+    {
+        SaveData data = new SaveData();
+        data.BestScoreName = BestScoreName;
+        data.BestScore = BestScore;
+
+        string json = JsonUtility.ToJson(data);
+        File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+    }
+
+    private void LoadGameData()
+    {
+        string path = Application.persistentDataPath + "/savefile.json";
+
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            SaveData data = JsonUtility.FromJson<SaveData>(json);
+            BestScoreName = data.BestScoreName;
+            BestScore = data.BestScore;
+        }
     }
 }

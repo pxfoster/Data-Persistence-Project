@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+[DefaultExecutionOrder(1000)]
 public class MenuManager : MonoBehaviour
 {
     [SerializeField] InputField playerName;
@@ -16,6 +17,11 @@ public class MenuManager : MonoBehaviour
         if (GameData.Instance.BestScore > 0)
         {
             highScore.text = $"Best Score : {GameData.Instance.BestScoreName} : {GameData.Instance.BestScore}";
+        }
+
+        if (GameData.Instance.PlayerName != "Anon")
+        {
+            playerName.text = GameData.Instance.PlayerName;
         }
     }
 
@@ -33,6 +39,8 @@ public class MenuManager : MonoBehaviour
 
     public void ExitGame()
     {
+        GameData.Instance.SaveGameData();
+
         #if UNITY_EDITOR
             EditorApplication.ExitPlaymode();
         #else
